@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question for You</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #ffe4e1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            transition: background-color 0.8s ease;
+        }
+
+        .container { text-align: center; padding: 20px; max-width: 500px; z-index: 10; }
+        h1 { color: #d63384; font-size: 2.2rem; margin-bottom: 10px; }
+        
+        .main-img {
+            width: 100%;
+            max-width: 350px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(214, 51, 132, 0.2);
+            margin-bottom: 25px;
+            border: 5px solid white;
+        }
+
+        .btn-group {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            min-height: 70px;
+        }
+
+        button {
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        #yesBtn { background-color: #ff4d6d; color: white; }
+        #noBtn { background-color: #adb5bd; color: white; position: absolute; }
+
+        .choice-btn { background-color: #fff; color: #ff4d6d; border: 2px solid #ff4d6d; }
+        .choice-btn:hover { background-color: #ff4d6d; color: white; }
+
+        #choiceSection, #finalSection { display: none; }
+
+        .message-box {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #d63384;
+            margin: 20px 0;
+            animation: heartBeat 1.2s infinite;
+        }
+
+        .summary-box {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        /* The Secret Message Styling */
+        #secretSurprise {
+            opacity: 0;
+            margin-top: 25px;
+            color: #ff4d6d;
+            font-style: italic;
+            font-size: 0.95rem;
+            transition: opacity 2s ease-in; /* Fades in slowly */
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .floating { animation: float 4s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="askSection" class="container">
+        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000&auto=format&fit=crop" alt="Romantic Hearts" class="main-img floating">
+        <h1>Will you go on a date with me?</h1>
+        <div class="btn-group">
+            <button id="yesBtn" onclick="showChoices()">YES! ❤️</button>
+            <button id="noBtn" onmouseover="moveButton()">No</button>
+        </div>
+    </div>
+
+    <div id="choiceSection" class="container">
+        <div style="font-size: 5rem; margin-bottom: 20px;">🌹</div>
+        <h1>I knew you'd say yes!</h1>
+        <p style="font-size: 1.2rem; color: #d63384;">What are we doing?</p>
+        <div class="btn-group">
+            <button class="choice-btn" onclick="fireConfetti(); showFinal('movie')">Movie Night 🍿</button>
+            <button class="choice-btn" onclick="fireConfetti(); showFinal('dinner')">Romantic Dinner 🍽️</button>
+        </div>
+    </div>
+
+    <div id="finalSection" class="container">
+        <div style="font-size: 5rem;">💖</div>
+        <div id="specialMessage" class="message-box"></div>
+        
+        <div class="summary-box">
+            <p id="responseText" style="font-size: 1.3rem; color: #333; font-weight: bold;"></p>
+        </div>
+
+        <button id="yesBtn" onclick="sendToWhatsApp()">Confirm on WhatsApp 💌</button>
+        
+        <div id="secretSurprise">
+            PS: I’ve been thinking about this all day... you're amazing. ✨
+        </div>
+    </div>
+
+    <script>
+        let choiceData = "";
+        const myWhatsApp = "919548123200";
+
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+        }
+
+        function showChoices() {
+            document.getElementById('askSection').style.display = 'none';
+            document.getElementById('choiceSection').style.display = 'block';
+            document.body.style.backgroundColor = '#ffccd5';
+        }
+
+        function fireConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffccd5', '#ffffff', '#d63384']
+            });
+        }
+
+        function showFinal(type) {
+            setTimeout(() => {
+                document.getElementById('choiceSection').style.display = 'none';
+                document.getElementById('finalSection').style.display = 'block';
+                document.body.style.backgroundColor = '#f8bbd0';
+                
+                const messageEl = document.getElementById('specialMessage');
+                const responseEl = document.getElementById('responseText');
+                
+                if (type === 'dinner') {
+                    choiceData = "Romantic Dinner";
+                    messageEl.innerText = "Love u! ❤️";
+                    responseEl.innerText = "You picked: Dinner Date 🍷";
+                } else {
+                    choiceData = "Movie Night";
+                    messageEl.innerText = "Let's go for a ride! 🏍️💨";
+                    responseEl.innerText = "You picked: Movie Night 🍿";
+                }
+
+                // START THE SECRET TIMER
+                setTimeout(() => {
+                    document.getElementById('secretSurprise').style.opacity = "1";
+                }, 10000); // 10000ms = 10 seconds
+
+            }, 500);
+        }
+
+        function sendToWhatsApp() {
+            const text = `Hey! I saw your message and I say YES! I choose ${choiceData}. Can't wait! ❤️`;
+            window.location.href = `https://wa.me/${myWhatsApp}?text=${encodeURIComponent(text)}`;
+        }
+    </script>
+</body>
+</html>
